@@ -106,7 +106,7 @@ class Grid:
         self.highlights.clear()
 
     def draw(self, surface):
-        self.draw_grid_lines(surface)
+        # self.draw_grid_lines(surface)
 
         self.draw_walls(surface)
 

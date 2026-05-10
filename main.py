@@ -11,41 +11,60 @@ pygame.init()
 DIMS = (900, 700)
 FPS = 60
 
-BACKGROUND = "black"
+BACKGROUND = (8, 10, 18)
+
+GRID_COLOR = (35, 40, 60)
+WALL_COLOR = (120, 140, 255)
+
+RAY_COLOR = (255, 255, 255)
+RAY_ALPHA = 35
+
+PLAYER_COLOR = (80, 255, 220)
+HIT_COLOR = (255, 220, 120)
 
 RAY_LENGTH = 2000
 MAX_STEPS = 100
 
-NUM_RAYS = 60
+NUM_RAYS = 120
 FOV = math.radians(60)
 
-PLAYER_COLOR = "cyan"
-HIT_COLOR = "red"
-
 screen = pygame.display.set_mode(DIMS)
-clock = pygame.time.Clock()
+pygame.display.set_caption("2D Raycaster")
 
+ray_surface = pygame.Surface(DIMS, pygame.SRCALPHA)
+
+clock = pygame.time.Clock()
 
 def draw_player(surface, player):
     screen_pos = world_to_screen_centre(surface, player.pos.tup())
 
     pygame.draw.circle(surface, PLAYER_COLOR, screen_pos, 8)
 
-    facing = player.pos + (player.direction * 25)
+    facing = player.pos + (player.direction * 30)
 
     pygame.draw.line(
         surface,
         PLAYER_COLOR,
         screen_pos,
         world_to_screen_centre(surface, facing.tup()),
-        2,
+        3,
     )
 
+
+def draw_ray_hits(surface, results):
+    for result in results:
+        hit_pos = world_to_screen_centre(surface, result.hit)
+
+        # pygame.draw.circle(surface, HIT_COLOR, hit_pos, 2)
+
+        if result.is_wall:
+            pygame.draw.circle(surface, (255, 255, 255), hit_pos, 4)
 
 def generate_rays(player):
     rays = []
 
     start_angle = player.angle - (FOV / 2)
+
     angle_step = FOV / NUM_RAYS
 
     for i in range(NUM_RAYS):
@@ -59,18 +78,8 @@ def generate_rays(player):
 
     return rays
 
-
-def draw_ray_hits(surface, results):
-    for result in results:
-        hit_pos = world_to_screen_centre(surface, result.hit)
-
-        pygame.draw.circle(surface, HIT_COLOR, hit_pos, 3)
-
-        if result.is_wall:
-            pygame.draw.circle(surface, "yellow", hit_pos, 5)
-
-
 def main():
+
     grid = Grid()
 
     grid.set_walls(
@@ -88,6 +97,9 @@ def main():
             (5, -3),
             (6, -3),
             (7, -3),
+            (-5, 5),
+            (-4, 5),
+            (-3, 5),
         }
     )
 
@@ -96,7 +108,7 @@ def main():
     running = True
 
     while running:
-        # dt = clock.tick(FPS) / 1000
+        clock.tick(FPS)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -107,9 +119,11 @@ def main():
 
                 cell = grid.world_to_cell(world_pos)
 
+                # left click -> add wall
                 if event.button == 1:
                     grid.add_wall(cell)
 
+                # right click -> remove wall
                 elif event.button == 3:
                     grid.remove_wall(cell)
 
@@ -131,27 +145,35 @@ def main():
 
         screen.fill(BACKGROUND)
 
-        grid.draw(screen)
+        # clear transparent surface
+        ray_surface.fill((0, 0, 0, 0))
 
-        draw_player(screen, player)
+        grid.draw(screen)
 
         for ray in rays:
             results = ray.cast(grid, max_steps=MAX_STEPS)
 
+            # where ray visually ends
             if results:
                 final_hit = results[-1].hit
             else:
                 final_hit = ray.endpoint(RAY_LENGTH).tup()
 
+            # glowing white ray
             pygame.draw.line(
-                screen,
-                "orange",
+                ray_surface,
+                (*RAY_COLOR, RAY_ALPHA),
                 world_to_screen_centre(screen, player.pos.tup()),
                 world_to_screen_centre(screen, final_hit),
-                1,
+                2,
             )
 
             draw_ray_hits(screen, results)
+
+        # blend all rays together
+        screen.blit(ray_surface, (0, 0))
+
+        draw_player(screen, player)
 
         pygame.display.flip()
 

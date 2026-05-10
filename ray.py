@@ -127,7 +127,7 @@ class Ray:
         results = []
 
         N = 0  # for now
-        while N <= max_steps:
+        while N < max_steps:
             if t_x < t_y:
                 t = t_x
                 t_x += delta_t_x
