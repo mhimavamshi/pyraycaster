@@ -13,10 +13,7 @@ class Player:
 
     @property
     def direction(self):
-        return Vec((
-            math.cos(self.angle),
-            math.sin(self.angle)
-        )).normalized()
+        return Vec((math.cos(self.angle), math.sin(self.angle))).normalized()
 
     def rotate_left(self):
         self.angle += self.turn_speed

@@ -14,7 +14,7 @@ class Grid:
     def world_to_cell(self, pos):
         return (
             math.floor(pos[0] / self.CELL_WIDTH),
-            math.floor(pos[1] / self.CELL_HEIGHT)
+            math.floor(pos[1] / self.CELL_HEIGHT),
         )
 
     def add_wall(self, cell):
@@ -30,10 +30,7 @@ class Grid:
         """
         Returns bottom-left corner of cell in world space.
         """
-        return (
-            cell[0] * self.CELL_WIDTH,
-            cell[1] * self.CELL_HEIGHT
-        )
+        return (cell[0] * self.CELL_WIDTH, cell[1] * self.CELL_HEIGHT)
 
     def cell_rect_to_screen(self, surface, cell):
         """
@@ -43,19 +40,11 @@ class Grid:
         wx, wy = self.cell_to_world(cell)
 
         # top-left world position of cell
-        top_left_world = (
-            wx,
-            wy + self.CELL_HEIGHT
-        )
+        top_left_world = (wx, wy + self.CELL_HEIGHT)
 
         sx, sy = world_to_screen_centre(surface, top_left_world)
 
-        return pygame.Rect(
-            sx,
-            sy,
-            self.CELL_WIDTH,
-            self.CELL_HEIGHT
-        )
+        return pygame.Rect(sx, sy, self.CELL_WIDTH, self.CELL_HEIGHT)
 
     def cell_corners_world(self, cell):
         x, y = self.cell_to_world(cell)
@@ -64,7 +53,7 @@ class Grid:
             "bottom_left": (x, y),
             "top_left": (x, y + self.CELL_HEIGHT),
             "top_right": (x + self.CELL_WIDTH, y + self.CELL_HEIGHT),
-            "bottom_right": (x + self.CELL_WIDTH, y)
+            "bottom_right": (x + self.CELL_WIDTH, y),
         }
 
     def set_walls(self, walls):
@@ -122,4 +111,3 @@ class Grid:
         self.draw_walls(surface)
 
         self.draw_highlights(surface)
-

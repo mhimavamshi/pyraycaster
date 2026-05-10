@@ -38,7 +38,7 @@ def draw_player(surface, player):
         PLAYER_COLOR,
         screen_pos,
         world_to_screen_centre(surface, facing.tup()),
-        2
+        2,
     )
 
 
@@ -51,15 +51,9 @@ def generate_rays(player):
     for i in range(NUM_RAYS):
         angle = start_angle + (i * angle_step)
 
-        direction = (
-            math.cos(angle),
-            math.sin(angle)
-        )
+        direction = (math.cos(angle), math.sin(angle))
 
-        ray = Ray(
-            dir_vec=direction,
-            start_pos=player.pos.tup()
-        )
+        ray = Ray(dir_vec=direction, start_pos=player.pos.tup())
 
         rays.append(ray)
 
@@ -79,29 +73,25 @@ def draw_ray_hits(surface, results):
 def main():
     grid = Grid()
 
-    grid.set_walls({
-        (3, 0),
-        (3, 1),
-        (3, 2),
-        (3, 3),
-
-        (0, 4),
-        (1, 4),
-        (2, 4),
-
-        (-2, -2),
-        (-2, -1),
-        (-2, 0),
-
-        (5, -3),
-        (6, -3),
-        (7, -3),
-    })
-
-    player = Player(
-        pos=(0, 0),
-        angle=0
+    grid.set_walls(
+        {
+            (3, 0),
+            (3, 1),
+            (3, 2),
+            (3, 3),
+            (0, 4),
+            (1, 4),
+            (2, 4),
+            (-2, -2),
+            (-2, -1),
+            (-2, 0),
+            (5, -3),
+            (6, -3),
+            (7, -3),
+        }
     )
+
+    player = Player(pos=(0, 0), angle=0)
 
     running = True
 
@@ -109,16 +99,11 @@ def main():
         # dt = clock.tick(FPS) / 1000
 
         for event in pygame.event.get():
-
             if event.type == pygame.QUIT:
                 running = False
 
             if event.type == pygame.MOUSEBUTTONDOWN:
-
-                world_pos = screen_to_world(
-                    (DIMS[0] // 2, DIMS[1] // 2),
-                    event.pos
-                )
+                world_pos = screen_to_world((DIMS[0] // 2, DIMS[1] // 2), event.pos)
 
                 cell = grid.world_to_cell(world_pos)
 
@@ -127,7 +112,6 @@ def main():
 
                 elif event.button == 3:
                     grid.remove_wall(cell)
-
 
         keys = pygame.key.get_pressed()
 
@@ -143,7 +127,6 @@ def main():
         if keys[pygame.K_s]:
             player.move_backward()
 
-
         rays = generate_rays(player)
 
         screen.fill(BACKGROUND)
@@ -153,11 +136,7 @@ def main():
         draw_player(screen, player)
 
         for ray in rays:
-
-            results = ray.cast(
-                grid,
-                max_steps=MAX_STEPS
-            )
+            results = ray.cast(grid, max_steps=MAX_STEPS)
 
             if results:
                 final_hit = results[-1].hit
@@ -169,7 +148,7 @@ def main():
                 "orange",
                 world_to_screen_centre(screen, player.pos.tup()),
                 world_to_screen_centre(screen, final_hit),
-                1
+                1,
             )
 
             draw_ray_hits(screen, results)

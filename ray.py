@@ -45,7 +45,6 @@ class Vec:
 #         self.is_wall = grid.is_wall(cell)
 
 
-
 @dataclass(slots=True)
 class CastResult:
     hit: tuple

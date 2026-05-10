@@ -1,12 +1,13 @@
 import pygame
 
 pygame.font.init()
-LABEL_FONT = pygame.font.SysFont('Arial', 20)
+LABEL_FONT = pygame.font.SysFont("Arial", 20)
 OFFSET = 10
 
 COLOR = "white"
 
 drawn_points = {}
+
 
 def add_point(pos, label=None):
     if pos not in drawn_points:
@@ -22,4 +23,4 @@ def draw_points(surface):
         pygame.draw.circle(surface, color, center, radius, width)
 
         label_pos = (pos[0] + OFFSET, pos[1] + OFFSET)
-        surface.blit(label_text, label_pos)    
+        surface.blit(label_text, label_pos)
