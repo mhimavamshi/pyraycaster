@@ -103,6 +103,15 @@ def main():
         }
     )
 
+    grid.set_wall_colors(
+        [
+            ((3, 0), "red"),
+            ((3, 1), "pink"),
+            ((3, 2), "orange"),
+            ((3, 3), "green"),
+        ]
+    )
+
     player = Player(pos=(0, 0), angle=0)
 
     running = True

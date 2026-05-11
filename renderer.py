@@ -94,14 +94,24 @@ class Renderer:
             ),
         )
 
-    def get_wall_color(self, side):
+    def get_wall_color(self, wall, side):
         if side == "x":
-            return WALL_COLOR_X
+            return self.grid.get_wall_color(wall, WALL_COLOR_X)
+            # return WALL_COLOR_X
 
         elif side == "y":
-            return WALL_COLOR_Y
+            return self.apply_y_shading(self.grid.get_wall_color(wall, WALL_COLOR_X))
 
         return WALL_COLOR_CORNER
+
+    def apply_y_shading(self, color):
+        shade = 0.7
+
+        return (
+            int(color[0] * shade),
+            int(color[1] * shade),
+            int(color[2] * shade),
+        )
 
     def apply_distance_shading(
         self,
@@ -145,7 +155,7 @@ class Renderer:
 
         y = self.height / 2 - wall_height / 2
 
-        color = self.get_wall_color(cast_result.side)
+        color = self.get_wall_color(cast_result.cell, cast_result.side)
 
         color = self.apply_distance_shading(
             color,
@@ -278,6 +288,17 @@ class RaycasterApp:
                 (3, 5),
                 (3, 6),
             }
+        )
+
+
+        self.grid.set_wall_colors(
+            [
+                ((0, 0), (255, 80, 80)),
+                ((1, 0), (255, 80, 80)),
+                ((2, 0), (255, 80, 80)),
+                ((2, 1), (255, 80, 80)),
+                ((2, 2), (255, 80, 80)),
+            ]
         )
 
         self.player = Player(

@@ -10,6 +10,7 @@ class Grid:
 
         self.highlights = set()
         self.walls = set()
+        self.wall_colors = {}
 
     def world_to_cell(self, pos):
         return (
@@ -25,6 +26,14 @@ class Grid:
 
     def is_wall(self, cell):
         return cell in self.walls
+
+    def set_wall_colors(self, data):
+        for cell, color in data:
+            if cell in self.walls:
+                self.wall_colors[cell] = color
+
+    def get_wall_color(self, cell, color):
+        return self.wall_colors.get(cell, color)
 
     def cell_to_world(self, cell):
         """
@@ -91,7 +100,8 @@ class Grid:
         for cell in self.walls:
             rect = self.cell_rect_to_screen(surface, cell)
 
-            pygame.draw.rect(surface, "gray", rect)
+            color = self.get_wall_color(cell, "gray")
+            pygame.draw.rect(surface, color, rect)
 
     def draw_highlights(self, surface):
         for cell in self.highlights:
