@@ -1,5 +1,6 @@
 - simple level editor
 X 2D minimap overlay:
 - Maybe add culling for out of view of minimap
-- Collision detection
+X Collision detection
 - perspectival flooring
+- add velocity and delta t for frame independence
