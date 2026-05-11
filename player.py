@@ -26,24 +26,42 @@ class Player:
     def move_forward(self):
         self.pos = self.pos + (self.direction * self.move_speed)
 
-    def move(self, movement, grid):
-
-        next_pos = self.pos + movement
+    def collides(self, pos, grid):
 
         test_points = [
-            (next_pos.x + self.radius, next_pos.y),
-            (next_pos.x - self.radius, next_pos.y),
-            (next_pos.x, next_pos.y + self.radius),
-            (next_pos.x, next_pos.y - self.radius),
+            (pos.x + self.radius, pos.y),
+            (pos.x - self.radius, pos.y),
+            (pos.x, pos.y + self.radius),
+            (pos.x, pos.y - self.radius),
         ]
 
-        blocked = any(
+        return any(
             grid.is_world_wall(p)
             for p in test_points
         )
 
-        if not blocked:
-            self.pos = next_pos
+
+    def move(self, movement, grid):
+
+        next_x = Vec(
+            (
+                self.pos.x + movement.x,
+                self.pos.y,
+            )
+        )
+
+        if not self.collides(next_x, grid):
+            self.pos = next_x
+
+        next_y = Vec(
+            (
+                self.pos.x,
+                self.pos.y + movement.y,
+            )
+        )
+
+        if not self.collides(next_y, grid):
+            self.pos = next_y
 
     def move_backward(self):
         self.pos = self.pos - (self.direction * self.move_speed)

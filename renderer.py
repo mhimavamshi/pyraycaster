@@ -455,7 +455,7 @@ class RaycasterApp:
         )
 
         self.player = Player(
-            pos=(0, 0),
+            pos=(50, 70),
             angle=0,
         )
 
