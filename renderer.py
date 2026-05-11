@@ -173,9 +173,7 @@ class Renderer:
             ),
         )
 
-    def render(self):
-        self.draw_background()
-
+    def draw_walls(self):
         rays = self.generate_rays()
 
         for column_index, (ray_angle, ray) in enumerate(rays):
@@ -194,6 +192,30 @@ class Renderer:
                 ray_angle,
                 final_result,
             )
+
+        return rays
+
+    def draw_minimap(self, rays):
+        # define minimap position relative to main screen
+        # get grid data
+        # player position
+        # turn all coordinates into minimap coordinates to scale and place properly
+        # cast results (can be returned by draw_walls instead of recalculating)
+        # render the hit points and wall hits
+
+        # render it to surface
+        # blit to self.surface?
+        
+        pass
+
+
+    def render(self):
+        self.draw_background()  
+        rays = self.draw_walls()
+        self.draw_minimap(rays)
+
+
+        
 
 
 class RaycasterApp:
@@ -306,7 +328,7 @@ class RaycasterApp:
             angle=0,
         )
 
-        self.base_fov = math.radians(120)
+        self.base_fov = math.radians(60)
 
         self.renderer = Renderer(
             self.screen, self.player, self.grid, num_rays=240, fov=self.base_fov

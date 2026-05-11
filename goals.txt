@@ -1,0 +1,3 @@
+- simple level editor
+- 2D minimap overlay
+- perspectival flooring
