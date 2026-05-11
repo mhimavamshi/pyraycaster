@@ -1,3 +1,5 @@
 - simple level editor
-- 2D minimap overlay
+X 2D minimap overlay:
+- Maybe add culling for out of view of minimap
+- Collision detection
 - perspectival flooring

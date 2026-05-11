@@ -46,6 +46,8 @@ class Renderer:
 
         self.projection_plane_distance = (self.width / 2) / math.tan(self.fov / 2)
 
+        self.minimap_enabled = True
+
     def generate_rays(self):
         rays = []
 
@@ -176,6 +178,8 @@ class Renderer:
     def draw_walls(self):
         rays = self.generate_rays()
 
+        cast_results = []
+
         for column_index, (ray_angle, ray) in enumerate(rays):
             results = ray.cast(
                 self.grid,
@@ -187,32 +191,159 @@ class Renderer:
 
             final_result = results[-1]
 
+            cast_results.append(
+                {
+                    "ray_angle": ray_angle,
+                    "ray": ray,
+                    "hit": final_result.hit,
+                    "steps": results,
+                }
+            )
+
             self.render_column(
                 column_index,
                 ray_angle,
                 final_result,
             )
 
-        return rays
+        return cast_results
 
-    def draw_minimap(self, rays):
-        # define minimap position relative to main screen
-        # get grid data
-        # player position
-        # turn all coordinates into minimap coordinates to scale and place properly
-        # cast results (can be returned by draw_walls instead of recalculating)
-        # render the hit points and wall hits
+    def world_to_minimap(
+        self,
+        world_pos,
+        player_pos,
+        minimap_center,
+        scale,
+    ):
 
-        # render it to surface
-        # blit to self.surface?
-        
-        pass
+        rel_x = world_pos[0] - player_pos[0]
+        rel_y = world_pos[1] - player_pos[1]
 
+        return (
+            minimap_center[0] + rel_x * scale,
+            minimap_center[1] - rel_y * scale,
+        )
+
+
+    def draw_minimap(self, cast_results):
+
+        minimap_size = 220
+        minimap_padding = 20
+        minimap_scale = 0.24
+
+        minimap_surface = pygame.Surface(
+            (minimap_size, minimap_size),
+            pygame.SRCALPHA,
+        )
+
+        minimap_surface.fill((15, 18, 26, 235))
+
+        minimap_center = (
+            minimap_size // 2,
+            minimap_size // 2,
+        )
+
+        player_pos = self.player.pos.tup()
+
+        for wall in self.grid.walls:
+
+            wx, wy = self.grid.cell_to_world(wall)
+
+            mx, my = self.world_to_minimap(
+                (wx, wy),
+                player_pos,
+                minimap_center,
+                minimap_scale,
+            )
+
+            wall_size = self.grid.CELL_WIDTH * minimap_scale
+
+            rect = pygame.Rect(
+                mx,
+                my - wall_size,
+                wall_size,
+                wall_size,
+            )
+
+            color = self.grid.get_wall_color(wall, (180, 180, 180))
+
+            pygame.draw.rect(
+                minimap_surface,
+                color,
+                rect,
+            )
+
+        every_nth_ray = 3
+
+        for cast in cast_results[::every_nth_ray]:
+
+            hit = cast["hit"]
+
+            hit_minimap = self.world_to_minimap(
+                hit,
+                player_pos,
+                minimap_center,
+                minimap_scale,
+            )
+
+            pygame.draw.line(
+                minimap_surface,
+                (255, 255, 120),
+                minimap_center,
+                hit_minimap,
+                1,
+            )
+
+        pygame.draw.circle(
+            minimap_surface,
+            (80, 255, 120),
+            (
+                int(minimap_center[0]),
+                int(minimap_center[1]),
+            ),
+            5,
+        )
+
+        dir_length = 20
+
+        direction_end = (
+            minimap_center[0]
+            + math.cos(self.player.angle) * dir_length,
+            minimap_center[1]
+            - math.sin(self.player.angle) * dir_length,
+        )
+
+        pygame.draw.line(
+            minimap_surface,
+            (80, 255, 120),
+            minimap_center,
+            direction_end,
+            3,
+        )
+
+        pygame.draw.rect(
+            minimap_surface,
+            (255, 255, 255),
+            minimap_surface.get_rect(),
+            2,
+        )
+
+        self.surface.blit(
+            minimap_surface,
+            (
+                minimap_padding,
+                minimap_padding,
+            ),
+        )
+
+    def toggle_minimap(self):
+        self.minimap_enabled = not self.minimap_enabled
 
     def render(self):
         self.draw_background()  
-        rays = self.draw_walls()
-        self.draw_minimap(rays)
+        cast_results = self.draw_walls()
+        if self.minimap_enabled:
+            self.draw_minimap(cast_results)
 
 
         
@@ -365,13 +496,17 @@ class RaycasterApp:
                         self.renderer.width / 2
                     ) / math.tan(self.renderer.fov / 2)
 
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_m:
+                        self.renderer.toggle_minimap()
+
             keys = pygame.key.get_pressed()
 
             if keys[pygame.K_a]:
-                self.player.rotate_right()
+                self.player.rotate_left()
 
             if keys[pygame.K_d]:
-                self.player.rotate_left()
+                self.player.rotate_right()
 
             if keys[pygame.K_w]:
                 self.player.move_forward()
