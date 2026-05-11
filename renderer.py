@@ -501,18 +501,13 @@ class RaycasterApp:
                         self.renderer.toggle_minimap()
 
             keys = pygame.key.get_pressed()
-
-            if keys[pygame.K_a]:
-                self.player.rotate_left()
-
-            if keys[pygame.K_d]:
-                self.player.rotate_right()
+            movement = Vec((0, 0))
 
             if keys[pygame.K_w]:
-                self.player.move_forward()
+                movement = movement + self.player.direction
 
             if keys[pygame.K_s]:
-                self.player.move_backward()
+                movement = movement - self.player.direction
 
             right_dir = Vec(
                 (
@@ -522,10 +517,20 @@ class RaycasterApp:
             ).normalized()
 
             if keys[pygame.K_q]:
-                self.player.pos = self.player.pos - (right_dir * self.player.move_speed)
+                movement = movement - right_dir
 
             if keys[pygame.K_e]:
-                self.player.pos = self.player.pos + (right_dir * self.player.move_speed)
+                movement = movement + right_dir
+
+            if movement.magnitude() > 0:
+                movement = movement.normalized() * self.player.move_speed
+                self.player.move(movement, self.grid)
+
+            if keys[pygame.K_a]:
+                self.player.rotate_left()
+
+            if keys[pygame.K_d]:
+                self.player.rotate_right()
 
             self.screen.fill((8, 10, 18))
 

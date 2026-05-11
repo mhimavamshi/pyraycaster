@@ -36,16 +36,12 @@ class Grid:
         return self.wall_colors.get(cell, color)
 
     def cell_to_world(self, cell):
-        """
-        Returns bottom-left corner of cell in world space.
-        """
         return (cell[0] * self.CELL_WIDTH, cell[1] * self.CELL_HEIGHT)
 
-    def cell_rect_to_screen(self, surface, cell):
-        """
-        Converts a grid cell into a pygame.Rect in screen space.
-        """
+    def is_world_wall(self, pos):
+        return self.is_wall(self.world_to_cell(pos))
 
+    def cell_rect_to_screen(self, surface, cell):
         wx, wy = self.cell_to_world(cell)
 
         # top-left world position of cell
