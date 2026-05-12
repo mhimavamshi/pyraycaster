@@ -2,7 +2,7 @@ import pygame
 import math
 
 from coordinate_mapper import screen_to_world, world_to_screen_centre
-from grid import Grid
+from grid import Grid, Wall
 from player import Player
 from ray import Ray
 
@@ -83,32 +83,23 @@ def main():
     grid = Grid()
 
     grid.set_walls(
-        {
-            (3, 0),
-            (3, 1),
-            (3, 2),
-            (3, 3),
-            (0, 4),
-            (1, 4),
-            (2, 4),
-            (-2, -2),
-            (-2, -1),
-            (-2, 0),
-            (5, -3),
-            (6, -3),
-            (7, -3),
-            (-5, 5),
-            (-4, 5),
-            (-3, 5),
-        }
-    )
-
-    grid.set_wall_colors(
         [
-            ((3, 0), "red"),
-            ((3, 1), "pink"),
-            ((3, 2), "orange"),
-            ((3, 3), "green"),
+            Wall((3, 0), "yellow"),
+            Wall((3, 1), "pink"),
+            Wall((3, 2), "red"),
+            Wall((3, 3), "green"),
+            Wall((0, 4), "gray"),
+            Wall((1, 4), "gray"),
+            Wall((2, 4), "gray"),
+            Wall((-2, -2), "gray"),
+            Wall((-2, -1), "gray"),
+            Wall((-2, 0), "gray"),
+            Wall((5, -3), "gray"),
+            Wall((6, -3), "gray"),
+            Wall((7, -3), "gray"),
+            Wall((-5, 5), "gray"),
+            Wall((-4, 5), "gray"),
+            Wall((-3, 5), "gray"),
         ]
     )
 
