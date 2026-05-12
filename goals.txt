@@ -1,4 +1,5 @@
-- simple level editor
+X simple level editor:
+- Adding color to walls by b key for brightness and wheelscroll on selected walls to change hue
 X 2D minimap overlay:
 - Maybe add culling for out of view of minimap
 X Collision detection
