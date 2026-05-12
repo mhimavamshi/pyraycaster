@@ -546,6 +546,6 @@ class RaycasterApp:
 
 
 if __name__ == "__main__":
-    filename = input("Import file?: ")
+    filename = input("Import map?: ")
     app = RaycasterApp(filename)
     app.run()
