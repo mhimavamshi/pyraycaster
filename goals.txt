@@ -6,6 +6,8 @@ X Collision detection
 - perspectival flooring
 - add velocity and delta t for frame independence
 - wall textures! 
+- sprites
+- animated sprites
 - have an idea for variable height wall: height metadata for each wall, check if its full height if not continue DDA and keep track of unfilled area and draw new walls. at the end draw ceiling/floor
 - physics
 - audio
